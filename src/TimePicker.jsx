@@ -85,7 +85,7 @@ export default class TimePicker extends PureComponent {
 
   stopPropagation = event => event.stopPropagation();
 
-  clear = () => this.onChange(null);
+  clear = () => this.onChange('00:00:00') || setTimeout(() => this.onChange(null), 1);
 
   renderInputs() {
     const {

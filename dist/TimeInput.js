@@ -149,6 +149,14 @@ var TimeInput = function (_PureComponent) {
             selectIfPossible(nextInput);
             break;
           }
+        case 'e':
+        case '.':
+        case '+':
+        case '-':
+          {
+            event.preventDefault();
+            break;
+          }
         case '0':
         case '1':
         case '2':
@@ -160,12 +168,10 @@ var TimeInput = function (_PureComponent) {
         case '8':
         case '9':
           {
-            var start = event.target.selectionStart;
-            var end = event.target.selectionEnd;
             var max = parseInt(event.target.max, 10);
-            var v = event.target.value;
-            var value = parseInt('' + v.substring(0, start) + event.key + v.substring(end), 10);
-            if (max <= value) {
+            var value = parseInt('' + event.target.value + event.key, 10);
+            // console.log(max, value, max < value);
+            if (max < value) {
               event.preventDefault();
             }
             break;

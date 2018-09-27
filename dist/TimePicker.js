@@ -109,7 +109,9 @@ var TimePicker = function (_PureComponent) {
     }, _this.stopPropagation = function (event) {
       return event.stopPropagation();
     }, _this.clear = function () {
-      return _this.onChange(null);
+      return _this.onChange('00:00:00') || setTimeout(function () {
+        return _this.onChange(null);
+      }, 1);
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
