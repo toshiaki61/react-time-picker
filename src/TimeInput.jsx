@@ -215,6 +215,26 @@ export default class TimeInput extends PureComponent {
         selectIfPossible(nextInput);
         break;
       }
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9': {
+        const start = event.target.selectionStart;
+        const end = event.target.selectionEnd;
+        const max = parseInt(event.target.max, 10);
+        const v = event.target.value;
+        const value = parseInt(`${v.substring(0, start)}${event.key}${v.substring(end)}`, 10);
+        if (max <= value) {
+          event.preventDefault();
+        }
+        break;
+      }
       default:
     }
   }
