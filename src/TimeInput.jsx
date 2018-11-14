@@ -23,7 +23,6 @@ import {
 import { isTime } from './shared/propTypes';
 
 const allViews = ['hour', 'minute', 'second'];
-const className = 'react-time-picker__button__input';
 
 const hoursAreDifferent = (date1, date2) => (
   (date1 && !date2)
@@ -47,13 +46,7 @@ const findNextInput = (element) => {
   return nextElement.nextElementSibling; // Actual input
 };
 
-const selectIfPossible = (element) => {
-  if (!element) {
-    return;
-  }
-  element.focus();
-  element.select();
-};
+const focus = element => element && element.focus();
 
 const removeUnwantedCharacters = str => str
   .split('')
@@ -172,6 +165,7 @@ export default class TimeInput extends PureComponent {
 
   get commonInputProps() {
     const {
+      className,
       disabled,
       isClockOpen,
       maxTime,
@@ -196,6 +190,14 @@ export default class TimeInput extends PureComponent {
     };
   }
 
+  onClick = (event) => {
+    if (event.target === event.currentTarget) {
+      // Wrapper was directly clicked
+      const [/* nativeInput */, firstInput] = event.target.children;
+      focus(firstInput);
+    }
+  }
+
   onKeyDown = (event) => {
     switch (event.key) {
       case 'ArrowLeft': {
@@ -203,7 +205,7 @@ export default class TimeInput extends PureComponent {
 
         const input = event.target;
         const previousInput = findPreviousInput(input);
-        selectIfPossible(previousInput);
+        focus(previousInput);
         break;
       }
       case 'ArrowRight':
@@ -212,7 +214,7 @@ export default class TimeInput extends PureComponent {
 
         const input = event.target;
         const nextInput = findNextInput(input);
-        selectIfPossible(nextInput);
+        focus(nextInput);
         break;
       }
       case 'e':
@@ -295,7 +297,7 @@ export default class TimeInput extends PureComponent {
       return value;
     })();
 
-    onChange(processedValue);
+    onChange(processedValue, false);
   }
 
   onChangeAmPm = (event) => {
@@ -334,7 +336,7 @@ export default class TimeInput extends PureComponent {
     });
 
     if (formElementsWithoutSelect.every(formElement => !formElement.value)) {
-      onChange(null);
+      onChange(null, false);
     } else if (
       formElements.every(formElement => formElement.value && formElement.checkValidity())
     ) {
@@ -343,7 +345,7 @@ export default class TimeInput extends PureComponent {
       const second = `0${values.second || 0}`.slice(-2);
       const timeString = `${hour}:${minute}:${second}`;
       const processedValue = this.getProcessedValue(timeString);
-      onChange(processedValue);
+      onChange(processedValue, false);
     }
   }
 
@@ -487,8 +489,14 @@ export default class TimeInput extends PureComponent {
   }
 
   render() {
+    const { className } = this.props;
+
     return (
-      <div className={className}>
+      <div
+        className={className}
+        onClick={this.onClick}
+        role="presentation"
+      >
         {this.renderNativeInput()}
         {this.renderCustomInputs()}
       </div>
@@ -502,6 +510,7 @@ TimeInput.defaultProps = {
 };
 
 TimeInput.propTypes = {
+  className: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   isClockOpen: PropTypes.bool,
   locale: PropTypes.string,

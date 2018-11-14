@@ -9,6 +9,8 @@ import {
 import { isTime } from '../shared/propTypes';
 import { min, max, updateInputWidth } from '../shared/utils';
 
+const select = element => element && element.select();
+
 export default class MinuteInput extends PureComponent {
   get maxMinute() {
     const { hour, maxTime } = this.props;
@@ -40,7 +42,7 @@ export default class MinuteInput extends PureComponent {
     const hasLeadingZero = value !== null && value < 10;
 
     return [
-      (hasLeadingZero ? '0' : null),
+      (hasLeadingZero && <span key="leadingZero" className={`${className}__leadingZero`}>0</span>),
       <input
         key="minute"
         className={mergeClassNames(
@@ -53,7 +55,9 @@ export default class MinuteInput extends PureComponent {
         max={maxMinute}
         min={minMinute}
         onChange={onChange}
+        onFocus={event => select(event.target)}
         onKeyDown={onKeyDown}
+        onKeyUp={event => updateInputWidth(event.target)}
         placeholder="--"
         ref={(ref) => {
           if (ref) {

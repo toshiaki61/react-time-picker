@@ -12,6 +12,7 @@ import TimeInput from './TimeInput';
 import { isTime } from './shared/propTypes';
 
 const allViews = ['hour', 'minute', 'second'];
+const baseClassName = 'react-time-picker';
 
 export default class TimePicker extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -50,7 +51,13 @@ export default class TimePicker extends PureComponent {
   }
 
   closeClock = () => {
-    this.setState({ isOpen: false });
+    this.setState((prevState) => {
+      if (!prevState.isOpen) {
+        return null;
+      }
+
+      return { isOpen: false };
+    });
   }
 
   toggleClock = () => {
@@ -104,8 +111,9 @@ export default class TimePicker extends PureComponent {
     } = this.props;
 
     return (
-      <div className="react-time-picker__button">
+      <div className={`${baseClassName}__wrapper`}>
         <TimeInput
+          className={`${baseClassName}__inputGroup`}
           disabled={disabled}
           locale={locale}
           isClockOpen={isOpen}
@@ -120,7 +128,7 @@ export default class TimePicker extends PureComponent {
         />
         {clearIcon !== null && (
           <button
-            className="react-time-picker__clear-button react-time-picker__button__icon"
+            className={`${baseClassName}__clear-button ${baseClassName}__button`}
             disabled={disabled}
             onClick={this.clear}
             onFocus={this.stopPropagation}
@@ -131,7 +139,7 @@ export default class TimePicker extends PureComponent {
         )}
         {clockIcon !== null && !disableClock && (
           <button
-            className="react-time-picker__clock-button react-time-picker__button__icon"
+            className={`${baseClassName}__clock-button ${baseClassName}__button`}
             disabled={disabled}
             onClick={this.toggleClock}
             onFocus={this.stopPropagation}
@@ -161,7 +169,7 @@ export default class TimePicker extends PureComponent {
       ...clockProps
     } = this.props;
 
-    const className = 'react-time-picker__clock';
+    const className = `${baseClassName}__clock`;
 
     const maxDetailIndex = allViews.indexOf(maxDetail);
 
@@ -172,7 +180,7 @@ export default class TimePicker extends PureComponent {
           `${className}--${isOpen ? 'open' : 'closed'}`,
         )}
         ref={(ref) => {
-          if (!ref) {
+          if (!ref || !isOpen) {
             return;
           }
 
@@ -181,7 +189,14 @@ export default class TimePicker extends PureComponent {
           const collisions = detectElementOverflow(ref, document.body);
 
           if (collisions.collidedBottom) {
-            ref.classList.add(`${className}--above-label`);
+            const overflowTopAfterChange = (
+              collisions.overflowTop + ref.clientHeight + this.wrapper.clientHeight
+            );
+
+            // If it's going to make situation any better, display the calendar above the input
+            if (overflowTopAfterChange < collisions.overflowBottom) {
+              ref.classList.add(`${className}--above-label`);
+            }
           }
         }}
       >
@@ -198,8 +213,6 @@ export default class TimePicker extends PureComponent {
   render() {
     const { className, disabled } = this.props;
     const { isOpen } = this.state;
-
-    const baseClassName = 'react-time-picker';
 
     return (
       <div

@@ -34,9 +34,13 @@ const getKey = key => ({
 });
 
 describe('TimeInput', () => {
+  const defaultProps = {
+    className: 'react-time-picker__inputGroup',
+  };
+
   it('renders a native input and custom inputs', () => {
     const component = mount(
-      <TimeInput />
+      <TimeInput {...defaultProps} />
     );
 
     const nativeInput = component.find('input[type="time"]');
@@ -48,7 +52,10 @@ describe('TimeInput', () => {
 
   it('does not render second input when maxDetail is "minute" or less', () => {
     const component = mount(
-      <TimeInput maxDetail="minute" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="minute"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -64,7 +71,10 @@ describe('TimeInput', () => {
 
   it('does not render second and minute inputs when maxDetail is "hour" or less', () => {
     const component = mount(
-      <TimeInput maxDetail="hour" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="hour"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -83,6 +93,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         value={date}
       />
@@ -102,6 +113,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         locale="de-DE"
         maxDetail="second"
         value={date}
@@ -120,6 +132,7 @@ describe('TimeInput', () => {
   it('shows empty value in all inputs correctly', () => {
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         value={null}
       />
@@ -139,6 +152,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         value={date}
       />
@@ -157,7 +171,10 @@ describe('TimeInput', () => {
 
   it('renders custom inputs in a proper order (12-hour format)', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -170,6 +187,7 @@ describe('TimeInput', () => {
   itIfFullICU('renders custom inputs in a proper order (24-hour format)', () => {
     const component = mount(
       <TimeInput
+        {...defaultProps}
         locale="de-DE"
         maxDetail="second"
       />
@@ -184,10 +202,13 @@ describe('TimeInput', () => {
 
   it('renders proper input separators', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
-    const separators = component.find('.react-time-picker__button__input__divider');
+    const separators = component.find('.react-time-picker__inputGroup__divider');
 
     expect(separators).toHaveLength(2);
     expect(separators.at(0).text()).toBe(':');
@@ -195,10 +216,10 @@ describe('TimeInput', () => {
 
   it('renders proper amount of separators', () => {
     const component = mount(
-      <TimeInput />
+      <TimeInput {...defaultProps} />
     );
 
-    const separators = component.find('.react-time-picker__button__input__divider');
+    const separators = component.find('.react-time-picker__inputGroup__divider');
     const customInputs = component.find('input[type="number"]');
 
     expect(separators).toHaveLength(customInputs.length - 1);
@@ -206,7 +227,10 @@ describe('TimeInput', () => {
 
   it('jumps to the next field when right arrow is pressed', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -224,7 +248,10 @@ describe('TimeInput', () => {
 
   it('jumps to the next field when separator key is pressed', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -235,7 +262,7 @@ describe('TimeInput', () => {
 
     expect(document.activeElement).toBe(hourInput.getDOMNode());
 
-    const separators = component.find('.react-time-picker__button__input__divider');
+    const separators = component.find('.react-time-picker__inputGroup__divider');
     const separatorKey = separators.at(0).text();
     hourInput.simulate('keydown', getKey(separatorKey));
 
@@ -244,7 +271,10 @@ describe('TimeInput', () => {
 
   it('does not jump to the next field when right arrow is pressed when the last input is focused', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -261,7 +291,10 @@ describe('TimeInput', () => {
 
   it('jumps to the previous field when left arrow is pressed', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -279,7 +312,10 @@ describe('TimeInput', () => {
 
   it('does not jump to the next field when right arrow is pressed when the last input is focused', () => {
     const component = mount(
-      <TimeInput maxDetail="second" />
+      <TimeInput
+        {...defaultProps}
+        maxDetail="second"
+      />
     );
 
     const customInputs = component.find('input[type="number"]');
@@ -300,6 +336,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         onChange={onChange}
         value={date}
@@ -312,7 +349,7 @@ describe('TimeInput', () => {
     customInputs.at(0).simulate('change');
 
     expect(onChange).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalledWith('20:17:00');
+    expect(onChange).toHaveBeenCalledWith('20:17:00', false);
   });
 
   it('triggers onChange correctly when cleared custom inputs', () => {
@@ -321,6 +358,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         onChange={onChange}
         value={date}
@@ -335,7 +373,7 @@ describe('TimeInput', () => {
     });
 
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(null);
+    expect(onChange).toHaveBeenCalledWith(null, false);
   });
 
   it('triggers onChange correctly when changed native input', () => {
@@ -344,6 +382,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         onChange={onChange}
         value={date}
@@ -356,7 +395,7 @@ describe('TimeInput', () => {
     nativeInput.simulate('change');
 
     expect(onChange).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalledWith('20:17:00');
+    expect(onChange).toHaveBeenCalledWith('20:17:00', false);
   });
 
   it('triggers onChange correctly when cleared native input', () => {
@@ -365,6 +404,7 @@ describe('TimeInput', () => {
 
     const component = mount(
       <TimeInput
+        {...defaultProps}
         maxDetail="second"
         onChange={onChange}
         value={date}
@@ -377,6 +417,6 @@ describe('TimeInput', () => {
     nativeInput.simulate('change');
 
     expect(onChange).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalledWith(null);
+    expect(onChange).toHaveBeenCalledWith(null, false);
   });
 });
